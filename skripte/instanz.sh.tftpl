@@ -1,0 +1,129 @@
+#!/bin/bash
+################################################################################
+# Geht nicht, Stand 23.1.25 mit Rieger (Einbindung von Variablen in Skripten)
+################################################################################
+set -e
+
+# Festlegen der Rollen
+MASTER="node1"
+THIS_NODE=$(hostname)
+
+# Hosts konfigurieren
+echo "Konfiguriere /etc/hosts..."
+cat <<EOF | sudo tee /etc/hosts
+${node1_ipv4} node1
+${node2_ipv4} node2
+${node3_ipv4} node3
+EOF
+
+# Verzeichnisse für GlusterFS erstellen
+echo "Erstelle Verzeichnisse für GlusterFS..."
+sudo mkdir -p /data/brick
+
+# GlusterFS installieren und starten
+echo "Installiere GlusterFS..."
+sudo apt update && sudo apt install -y glusterfs-server
+sudo systemctl enable --now glusterd
+
+# GlusterFS Trusted Pool erstellen (nur vom Master aus)
+if [[ "$THIS_NODE" == "$MASTER" ]]; then
+  echo "Master-Node erkannt. Prüfe, ob Peers verfügbar sind..."
+  
+  # Wiederholen, bis alle Peers verbunden sind
+  for NODE in node2 node3; do
+    while ! gluster peer probe $NODE &>/dev/null; do
+      echo "Warte auf $NODE..."
+      sleep 5
+    done
+  done
+
+  echo "Erstelle GlusterFS Trusted Pool..."
+  gluster pool list
+
+  echo "Erstelle GlusterFS-Volume..."
+  gluster volume create gv0 replica 3 \
+    node1:/data/brick \
+    node2:/data/brick \
+    node3:/data/brick force
+  gluster volume start gv0
+else
+  echo "Worker-Node erkannt. Warte auf GlusterFS-Volume vom Master..."
+  while ! gluster volume info gv0 &>/dev/null; do
+    echo "Warte auf Volume gv0..."
+    sleep 5
+  done
+fi
+
+# GlusterFS-Volume mounten
+echo "Mounten des GlusterFS-Volumes..."
+sudo mkdir -p /mnt/paperless
+sudo mount -t glusterfs -o backupvolfile-server=node2 -o backup-volfile-servers=node3,node1 node1:/gv0 /mnt/paperless
+
+# Mounten in /etc/fstab
+echo "Konfiguriere persistentes Mounten..."
+echo "node1:/gv0 /mnt/paperless glusterfs defaults,_netdev 0 0" | sudo tee -a /etc/fstab
+
+# Docker Compose für Paperless-ngx konfigurieren
+if [[ "$THIS_NODE" == "$MASTER" ]]; then
+  echo "Erstelle Docker Compose für Paperless-ngx..."
+  cat <<EOF > docker-compose.yml
+services:
+  broker:
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+  db:
+    image: docker.io/library/postgres:16
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+    ports:
+      - "8000:8000"
+    volumes:
+      - /mnt/paperless/data:/usr/src/paperless/data
+      - /mnt/paperless/media:/usr/src/paperless/media
+      - ./export:/usr/src/paperless/export
+      - ./consume:/usr/src/paperless/consume
+    env_file: docker-compose.env
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+
+volumes:
+  redisdata:
+  pgdata:
+EOF
+
+  cat <<EOF > docker-compose.env
+###############################################################################
+# Paperless-ngx settings                                                      #
+###############################################################################
+
+PAPERLESS_OCR_LANGUAGE=eng
+PAPERLESS_TIME_ZONE=UTC
+EOF
+
+  cat <<EOF > .env
+COMPOSE_PROJECT_NAME=paperless
+EOF
+
+  # Docker-Compose Stack starten
+  echo "Starte Paperless-ngx Docker-Stack..."
+  sudo apt install -y docker-compose
+  sudo docker-compose up -d
+fi
+
+echo "Bereitstellung abgeschlossen!"
