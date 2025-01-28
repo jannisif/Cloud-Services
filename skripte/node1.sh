@@ -169,3 +169,36 @@ docker-compose up -d
 # docker-compose logs -f paperless
 
 echo "Deploying erfolgreich abgeschlossen! Bitte noch einen kleinen Moment warten!"
+
+
+
+
+echo "Installing Node Exporter for system monitoring..."
+
+# Download and install Node Exporter
+wget https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-linux-amd64.tar.gz
+tar xvf node_exporter-linux-amd64.tar.gz
+sudo mv node_exporter-linux-amd64/node_exporter /usr/local/bin/
+
+# Create a systemd service for Node Exporter
+cat <<EOF | sudo tee /etc/systemd/system/node_exporter.service
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=root
+ExecStart=/usr/local/bin/node_exporter
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable and start Node Exporter
+sudo systemctl daemon-reload
+sudo systemctl enable node_exporter
+sudo systemctl start node_exporter
+
+echo "Node Exporter installed and running!"

@@ -26,9 +26,17 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'paperless'
+
+  # System Metrics from Node Exporter
+  - job_name: 'node_exporter'
     static_configs:
       - targets: ['node1:9100', 'node2:9100', 'node3:9100']
+
+
+  # PostgreSQL Metrics (Database Performance)
+  - job_name: 'postgres_exporter'
+    static_configs:
+      - targets: ['node1:9187']  # PostgreSQL Exporter runs on port 9187
 EOF
 
 # Create a Prometheus systemd service
