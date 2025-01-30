@@ -38,7 +38,6 @@ provider "openstack" {
   cacert_file = local.cacert_file
 }
 # create keypair
-  # import keypair, if public_key is not specified, create new keypair to use
 resource "openstack_compute_keypair_v2" "terraform-keypair" {
   name       = "projectone"
   #public_key = file("~/.ssh/id_rsa.pub")

@@ -24,7 +24,7 @@ services:
     image: docker.io/library/postgres:16
     restart: unless-stopped
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      -/mnt/paperless/pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
@@ -128,20 +128,19 @@ chmod -R 755 /mnt/paperless
 # Docker-Compose Stack starten
 docker-compose up -d
 
-# Logs anzeigen
-# docker-compose logs -f paperless
+
 
 echo "Deploying erfolgreich abgeschlossen!"
 
-
-
+# Logs anzeigen
+docker-compose logs -f paperless
 
 echo "Installing Node Exporter for system monitoring..."
 
 # Download and install Node Exporter
-wget https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-linux-amd64.tar.gz
-tar xvf node_exporter-linux-amd64.tar.gz
-sudo mv node_exporter-linux-amd64/node_exporter /usr/local/bin/
+#wget https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-linux-amd64.tar.gz
+#tar xvf node_exporter-linux-amd64.tar.gz
+#sudo mv node_exporter-linux-amd64/node_exporter /usr/local/bin/
 
 # Create a systemd service for Node Exporter
 cat <<EOF | sudo tee /etc/systemd/system/node_exporter.service
@@ -160,8 +159,8 @@ WantedBy=multi-user.target
 EOF
 
 # Enable and start Node Exporter
-sudo systemctl daemon-reload
-sudo systemctl enable node_exporter
-sudo systemctl start node_exporter
+#sudo systemctl daemon-reload
+#sudo systemctl enable node_exporter
+#sudo systemctl start node_exporter
 
-echo "Node Exporter installed and running!"
+#echo "Node Exporter installed and running!"

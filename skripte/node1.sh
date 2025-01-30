@@ -10,6 +10,8 @@ cat <<EOF | sudo tee /etc/hosts
 192.168.254.22 node2
 192.168.254.23 node3
 EOF
+
+
 # Paperless-ngx Configs
 echo "Konfiguriere docker-compose.yml Paperless-ngx..."
 cat <<EOF > docker-compose.yml
@@ -24,7 +26,7 @@ services:
     image: docker.io/library/postgres:16
     restart: unless-stopped
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - /mnt/paperless/pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
@@ -84,7 +86,7 @@ mkdir -p /data/brick
 
 # GlusterFS installieren und starten
 echo "Installiere GlusterFS..."
-apt update && apt install -y glusterfs-server
+apt-get update && apt-get install -y glusterfs-server
 systemctl enable --now glusterd
 
 # Master only
@@ -123,9 +125,12 @@ done
 echo "Mounten des GlusterFS-Volumes..."
 mkdir -p /mnt/paperless
 
+echo "Setze Mounts auf BackupNodes..."
 mount -t glusterfs -o backupvolfile-server=node1 -o backup-volfile-servers=node2 node1:/gv0 /mnt/paperless
+echo "Schreibe Mounts in /etc/fstab..."
 echo "node1:/gv0 /mnt/paperless glusterfs defaults,_netdev,backup-volfile-servers=node2:node3 0 0" | tee -a /etc/fstab
 # Test Mount OK
+echo "Teste Mounts..."
 df -h | grep /mnt/paperless
 touch /mnt/paperless/node1
 ls /mnt/paperless
@@ -135,18 +140,19 @@ echo "Konfiguriere persistentes Mounten..."
 echo "node1:/gv0 /mnt/paperless glusterfs defaults,_netdev,backup-volfile-servers=node2:node3 0 0" | tee -a /etc/fstab
 
 # GlusterFS Self-Healing aktivieren
-echo "Aktiviere GlusterFS Self-Heal.ing.."
+echo "Aktiviere GlusterFS Self-Healing.."
 gluster volume set gv0 cluster.self-heal-daemon on
 
 sleep 10
 #heath state
 gluster volume heal gv0
 gluster volume heal gv0 info
-
+echo "Teste Mounts..."
 ############################################################################### Geht
 ###############################################################################
 
 # Docker installieren
+echo "Installiere Docker..."
 apt-get update
 apt-get install -y curl apt-transport-https ca-certificates software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -164,21 +170,19 @@ chmod -R 755 /mnt/paperless
 
 # Docker-Compose Stack starten
 docker-compose up -d
-
 # Logs anzeigen
-# docker-compose logs -f paperless
+#docker-compose logs -f paperless
 
 echo "Deploying erfolgreich abgeschlossen! Bitte noch einen kleinen Moment warten!"
 
 
 
-
-echo "Installing Node Exporter for system monitoring..."
+#echo "Installing Node Exporter for system monitoring..."
 
 # Download and install Node Exporter
-wget https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-linux-amd64.tar.gz
-tar xvf node_exporter-linux-amd64.tar.gz
-sudo mv node_exporter-linux-amd64/node_exporter /usr/local/bin/
+#wget https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-linux-amd64.tar.gz
+#tar xvf node_exporter-linux-amd64.tar.gz
+#sudo mv node_exporter-linux-amd64/node_exporter /usr/local/bin/
 
 # Create a systemd service for Node Exporter
 cat <<EOF | sudo tee /etc/systemd/system/node_exporter.service
@@ -197,8 +201,12 @@ WantedBy=multi-user.target
 EOF
 
 # Enable and start Node Exporter
-sudo systemctl daemon-reload
-sudo systemctl enable node_exporter
-sudo systemctl start node_exporter
+#sudo systemctl daemon-reload
+#sudo systemctl enable node_exporter
+#sudo systemctl start node_exporter
 
-echo "Node Exporter installed and running!"
+#echo "Node Exporter installed and running!"
+
+docker-compose logs -f paperless
+docker-compose logs
+

@@ -3,10 +3,10 @@
 echo "Starting setup for Prometheus & Grafana monitoring..."
 
 # Update package lists
-sudo apt update
+apt update
 
 # Install dependencies
-sudo apt install -y wget unzip curl
+apt install -y wget unzip curl
 
 ###############################################################################
 # Install Prometheus
@@ -78,3 +78,7 @@ sudo systemctl status prometheus --no-pager
 sudo systemctl status grafana-server --no-pager
 
 echo "Setup complete! Access Prometheus at http://<mgmt-instance-ip>:9090 and Grafana at http://<mgmt-instance-ip>:3000"
+
+
+
+
