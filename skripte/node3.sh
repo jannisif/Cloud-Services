@@ -24,7 +24,8 @@ services:
     image: docker.io/library/postgres:16
     restart: unless-stopped
     volumes:
-      - /mnt/paperless/pgdata:/var/lib/postgresql/data
+      - /var/lib/postgresql/data
+      #- /mnt/paperless/pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
@@ -97,15 +98,15 @@ done
 # GlusterFS-Volume mounten
 echo "Mounten des GlusterFS-Volumes..."
 mkdir -p /mnt/paperless
-sudo mount -t glusterfs -o backupvolfile-server=node2 -o backup-volfile-servers=node1 node1:/gv0 /mnt/paperless
+mount -t glusterfs -o backupvolfile-server=node2 -o backup-volfile-servers=node3 node2:/gv0 /mnt/paperless
 
 # Mounten in /etc/fstab
 echo "Konfiguriere persistentes Mounten..."
-echo "node1:/gv0 /mnt/paperless glusterfs defaults,_netdev,backup-volfile-servers=node2:node1 0 0" | tee -a /etc/fstab
+echo "node1:/gv0 /mnt/paperless glusterfs defaults,_netdev,backup-volfile-servers=node1:node3 0 0" | tee -a /etc/fstab
 
 # Test Mount OK
 df -h | grep /mnt/paperless
-touch /mnt/paperless/node3
+touch /mnt/paperless/node2
 ls /mnt/paperless
 
 
@@ -128,41 +129,7 @@ chmod -R 755 /mnt/paperless
 # Docker-Compose Stack starten
 docker-compose up -d
 
-# Logs anzeigen
-#docker-compose logs -f paperless
+
 
 echo "Deploying erfolgreich abgeschlossen!"
 
-
-
-
-
-#echo "Installing Node Exporter for system monitoring..."
-
-# Download and install Node Exporter
-#wget https://github.com/prometheus/node_exporter/releases/latest/download/node_exporter-linux-amd64.tar.gz
-#tar xvf node_exporter-linux-amd64.tar.gz
-#åsudo mv node_exporter-linux-amd64/node_exporter /usr/local/bin/
-
-# Create a systemd service for Node Exporter
-cat <<EOF | sudo tee /etc/systemd/system/node_exporter.service
-[Unit]
-Description=Node Exporter
-Wants=network-online.target
-After=network-online.target
-
-[Service]
-User=root
-ExecStart=/usr/local/bin/node_exporter
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Enable and start Node Exporter
-#sudo systemctl daemon-reload
-#sudo systemctl enable node_exporter
-#sudo systemctl start node_exporter
-
-#echo "Node Exporter installed and running!"
