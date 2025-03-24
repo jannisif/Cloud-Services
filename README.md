@@ -1,33 +1,46 @@
 # Betriebshandbuch (BHB) - Paperless NGX Cloud Services
 
 ## 1. Kurzbeschreibung
-Das Paperless NGX System dient als digitale Dokumentenverwaltungslösung, die auf einer Cloud-Infrastruktur in OpenStack basiert. Die Anwendung besteht aus mehreren Instanzen, die zur Lastverteilung und Skalierbarkeit dienen. Monitoring wird durch Prometheus und Grafana gewährleistet.
+Paperless-NGX ist ein Dokumentenmangagementsystem, welches auf Docker aufsetzt und OpenSource ist. Dabei werden im Hintergrund mithilfe von GlusterFS und pgpool2  die verschiedenen Instanzen synchron und konsistent gehalten. Eine zusätzliche Management-Instanz kümmert sich sowohl um das Monitoring mithilfe von Prometheus/Grafana als auch um das Backup mittels Borg. Perspektivisch planen wir, auch das Logging durch Loki umzusetzen.
+Dieses Konstrukt wird mithilfe von Terraform auf OpenStack deployt und wird anhand eines Shell-Skripts konfiguriert. Dabei sind die Paperless-NGX Instanzen zumindest manuell skalierbar.
 
 ## 2. Beteiligte und Zuständigkeiten
-- **Systemadministratoren:** Jannis Fingerhut (jannis.fingerhut@informatik.hs-fulda.de), Atharva Kishor Naik (atharva-kishor.naik@informatik.hs-fulda.de)
-- **Entwicklungsteam:** Jannis Fingerhut (jannis.fingerhut@informatik.hs-fulda.de), Atharva Kishor Naik (atharva-kishor.naik@informatik.hs-fulda.de)
-- **Support-Team:** Jannis Fingerhut (jannis.fingerhut@informatik.hs-fulda.de), Atharva Kishor Naik (atharva-kishor.naik@informatik.hs-fulda.de)
+
+| Name  | Vorname | E-Mail  | Zuständigkeit | Vertretung |
+|-------|---------|---------|--------------|------------|
+| Naik | Atharva Kishor | atharva-kishor.naik@informatik.hs-fulda.de | Administration, Konfiguration  | Jannis Fingerhut |
+| Fingerhut | Jannis | jannis.fingerhut@informatik.hs-fulda.de | Doku BHB, Monitoring, Backup  | Atharva Kishor Naik |
+
 
 ## 3. Architektur
 
-![Architektur](DiagrammArchitektur.drawio.png)
+BILD
 
 Das System umfasst:
-- 3 Paperless NGX Instanzen (node1, node2, node3) für Lastverteilung.
-- 1 Management-Instanz zur Steuerung und Überwachung.
-- OpenStack-Netzwerkumgebung mit definierten Sicherheitsgruppen und Floating IPs.
-- Datenbank (PostgreSQL) und Message Broker (Redis) in Containern.
-- Monitoring mit Prometheus und Grafana.
+- OpenStack-Netzwerkumgebung mit definierten Sicherheitsgruppen und Floating IPs
+- 3 Paperless NGX Instanzen inkl. GlusterFS und pgpool2 für Lastverteilung
+- 1 Management-Instanz für Backup und Monitoring
 
 ## 4. Installation
-- Bereitstellung der VMs über Terraform.
-- Automatisierte Konfiguration mit Bash-Skripten (`paperless.sh`, `nodeX.sh`, `mgmt.sh`).
-- Docker-Container für Paperless NGX starten mit `docker-compose up -d`.
+- Bereitstellung der virtuelle Maschinen über Terraform
+- Automatisierte Konfiguration mit Bash-Skripten ( `nodeX.sh`, `mgmt.sh`)
+
+### Vorbereitung
+- Zugang(-sdaten) zu einer OpenStack-Instanz
+- Terraform installiert
+- Optional: VSCode mit HashiCorp Terraform Add-On
+
+### Aufsetzen/Installation:
+1. Klonen des Github-Repository
+2. Eintragen der Zugangsdaten
+3. Anpassen der Skripte und Instanzen an persönliche Präferenzen
+4. Terrafom init, terraform apply ausführen
+5. Warten und 
 
 ## 5. Konfiguration
-- Paperless NGX-Umgebungskonfiguration (Über `docker-compose.env`).
-- Netzwerkkonfiguration mit festen IPs in OpenStack.
-- Sicherheitsgruppen erlauben nur notwendige Ports (z.B. `8000` für Paperless, `22` für SSH).
+- Paperless NGX-Umgebungskonfiguration (über `docker-compose.env`).
+- Netzwerkkonfiguration mit festen IPs in OpenStack(Notwendigkeit durch Skripte).
+- Sicherheitsgruppen erlauben nur notwendige Ports (z.B. `8000` für Paperless-NGX, `22` für SSH).
 
 ## 6. Abhängigkeiten
 - **Netzwerk:** OpenStack definiert Subnetze und Router.
@@ -66,3 +79,19 @@ Das System umfasst:
 ## 13. Skalierung und Ausfallsicherheit
 - Zusätzliche Paperless NGX-Instanzen können per Terraform bereitgestellt werden.
 - Hochverfügbarkeit durch verteilte Instanzen auf verschiedene Server.
+
+
+
+Kurzbeschreibung
+Beteiligte/inkl. Zuständigkeiten/Vertretung ;)
+Architektur (Diagramm/Überblick)
+Installation (grob)
+Konfiguration (eher grob, nur wesentliche Details)
+Abhängigkeiten: Netz, Storage, Server …
+Monitoring/Überwachung/Logging/Reporting
+Trouble Shooting
+Wartungsaufgaben (Updates, Abrechnung, Speicherplatz bereitstellen …)
+Authentifizierung, Autorisierung, Accounting, Identity Management, Neue Benutzer/Benutzer löschen
+Benutzergruppen (z.B. für Benachrichtigung, spezielle Funktionen für PowerUser usw.)
+Backup/Restore/Failover/Disaster Recovery/Archiv
+Skalierung

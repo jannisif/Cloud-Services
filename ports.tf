@@ -2,8 +2,8 @@
 # Ports
 ###########################################################################
 # Port mgmt
-resource "openstack_networking_port_v2" "port_mgmt" {
-  name           = "port_mgmt"
+resource "openstack_networking_port_v2" "port_mgm" {
+  name           = "port_mgm"
   network_id     = openstack_networking_network_v2.terraform-network-1.id
   admin_state_up = "true"
   security_group_ids = [openstack_networking_secgroup_v2.sicgru.id]

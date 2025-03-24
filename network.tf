@@ -24,13 +24,25 @@ resource "openstack_networking_router_interface_v2" "router_interface_1" {
 ###########################################################################
 # assign floating ip to instance 
 ###########################################################################
-data "openstack_networking_port_v2" "port-1" {
+data "openstack_networking_port_v2" "port-mgm" {
+  fixed_ip = openstack_compute_instance_v2.management.access_ip_v4
+}
+data "openstack_networking_port_v2" "port-node1" {
   fixed_ip = openstack_compute_instance_v2.node1.access_ip_v4
+}
+###########################################################################
+resource "openstack_networking_floatingip_v2" "fip_0" {
+  pool    = local.pubnet_name
+  port_id = data.openstack_networking_port_v2.port-mgm.id
 }
 resource "openstack_networking_floatingip_v2" "fip_1" {
   pool    = local.pubnet_name
-  port_id = data.openstack_networking_port_v2.port-1.id
+  port_id = data.openstack_networking_port_v2.port-node1.id
 }
-output "docker_vip_addr" {
+###########################################################################
+output "docker_mgm_addr" {
+  value = openstack_networking_floatingip_v2.fip_0
+}
+output "docker_node1_addr" {
   value = openstack_networking_floatingip_v2.fip_1
 }

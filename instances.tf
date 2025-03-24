@@ -8,7 +8,7 @@ resource "openstack_compute_instance_v2" "management" {
   flavor_name       = local.flavor_name
   key_pair          = openstack_compute_keypair_v2.terraform-keypair.name
   network {
-    port = openstack_networking_port_v2.port_mgmt.id
+    port = openstack_networking_port_v2.port_mgm.id
   }
   user_data = file("./skripte/mgm.sh")
 } 
