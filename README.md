@@ -14,7 +14,7 @@ Dieses Konstrukt wird mithilfe von Terraform auf OpenStack deployt und wird anha
 
 ## 3. Architektur
 
-BILD
+![Architektur](DiagrammArchitektur.drawio.png)
 
 Das System umfasst:
 - OpenStack-Netzwerkumgebung mit definierten Sicherheitsgruppen und Floating IPs
