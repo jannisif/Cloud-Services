@@ -1,4 +1,4 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" modified="2025-03-31T06:45:37.946Z" version="23.1.5" etag="oIMUXt-ZXO4uPkQv-POH" type="device">
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" modified="2025-03-31T06:47:21.871Z" version="23.1.5" etag="odn7BmqKG6OO0WK8C9zD" type="device">
   <diagram name="Seite-1" id="SucJZKahYQlLSCs5oSBS">
     <mxGraphModel dx="7601" dy="3457" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="413" pageHeight="583" math="0" shadow="0">
       <root>
@@ -74,11 +74,6 @@
         </mxCell>
         <mxCell id="bUnyjfJmZebXfHfqXDth-4" value="" style="fontColor=#0066CC;verticalAlign=top;verticalLabelPosition=bottom;labelPosition=center;align=center;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;gradientColor=none;gradientDirection=north;strokeWidth=2;shape=mxgraph.networks.server;" parent="1" vertex="1">
           <mxGeometry x="-4794" y="-1606" width="60" height="74" as="geometry" />
-        </mxCell>
-        <mxCell id="bUnyjfJmZebXfHfqXDth-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="bUnyjfJmZebXfHfqXDth-5" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="-5120" y="-1550" as="targetPoint" />
-          </mxGeometry>
         </mxCell>
         <mxCell id="bUnyjfJmZebXfHfqXDth-5" value="" style="fontColor=#0066CC;verticalAlign=top;verticalLabelPosition=bottom;labelPosition=center;align=center;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;gradientColor=none;gradientDirection=north;strokeWidth=2;shape=mxgraph.networks.server;" parent="1" vertex="1">
           <mxGeometry x="-4650" y="-1606" width="60" height="74" as="geometry" />
