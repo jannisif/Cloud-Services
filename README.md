@@ -20,7 +20,7 @@ Neben einem grundsätzlichen Verständnis von Docker und Linux sollte nach einer
 ![Architektur](DiagrammArchitektur.drawio.png)
 
 Das aufgeführte System umfasst:
-- OpenStack-Netzwerkumgebung mit Sicherheitsgruppen, einem Router und Floating IPs
+- OpenStack-Netzwerkumgebung mit Sicherheitsgruppen, einem Load Balancer und Floating IPs
 - 3 Worker-Instanzen mit Paperless-ngx über Docker und GlusterFS für Hochverfügbarkeit
 - 1 Management-Instanz für Backup und Monitoring
 
@@ -124,10 +124,10 @@ Standardmäßig wird über die Docker-compose ein Admin-Zugang für Paperless-ng
 
  ## Ausblick
  
-Wie wir schon erwähnt haben, fehlt leider noch `pgpool-II` als essentieller Teil der Installation. Dies sorgt dafür das unser Service nicht ganz wie gewünscht läuft, da die Datenbanken zwischen den Paperless-ngx-Instanzen nicht synchron ist. Außerdem wollten wir S3-Speicher als Backup-Ziel einsetzen, dies hat aber ebenfalls nicht geklappt.
+Wie wir schon erwähnt haben, fehlt leider noch `pgpool-II` als essentieller Teil der Installation. Dies sorgt dafür, dass unser Service nicht ganz wie gewünscht läuft, da die Datenbanken zwischen den Paperless-ngx-Instanzen nicht synchron sind. Außerdem wollten wir S3-Speicher als Backup-Ziel einsetzen, dies hat aber ebenfalls nicht geklappt.
 Ansonsten können natürlich detaillierte Verbesserungen, wie die Designs der Grafana-Dashboard in Configs mit in die Installation aufgenommen werden oder eine Modifikation der Paperless-ngx Seite, anhand der man erkennt, auf welchem Node man sich befindet. Ein gutes Beispiel ist die Horstl-Seite der HS Fulda, wo unten steht, auf welchem Node man sich gerade befindet. Dies kann zur Fehlerbehebung nützlich sein und auch für Wartungsarbeiten geeignet sein.
-Das Thema Backup ist leider zu kurz gekommen, da müsste man alle Nodes sichern. Wir haben jetzt nur den Master Node.
-Auch hätten wir gerne DNS eingesetzt, mit denen man nicht über schwer zu merkende IP-Adressen die Instanzen im Browser aufruft, sondern über einen einfachen Domain-Namen!
+Das Thema Backup ist leider zu kurz gekommen, da müsste man alle Nodes sichern. Wir haben jetzt nur den Master Node gesichert.
+Wir hätten gerne DNS eingesetzt, mit denen man nicht über schwer zu merkende IP-Adressen die Instanzen im Browser aufruft, sondern über einen einfachen Domain-Namen!
 
 Zusammenfassend können wir sagen, dass wir viel gelernt haben bei diesem teils sehr steinigen Prozess. Vor allem haben wir bemerkt, wie man doch sehr unterschiedliche Services sinnvoll miteinander kombinieren kann. Und super ist: man kann dies bei sich auch im HomeLab anwenden!
 
