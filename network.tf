@@ -46,3 +46,56 @@ output "docker_mgm_addr" {
 output "docker_node1_addr" {
   value = openstack_networking_floatingip_v2.fip_1
 }
+
+###########################################################################
+###########################################################################
+# Load Balancer
+###########################################################################
+
+
+# Load Balancer erstellen
+resource "openstack_lb_loadbalancer_v2_loadbalancer" "paperless_lb" {
+  name          = "paperless-lb"
+  vip_subnet_id = "openstack_networking_subnet_v2.terraform-subnet-1.id" 
+
+}
+
+# Listener konfigurieren
+resource "openstack_lb_loadbalancer_v2_listener" "paperless_listener" {
+  name            = "paperless-listener"
+  loadbalancer_id = openstack_lb_loadbalancer_v2_loadbalancer.paperless_lb.id
+  protocol        = "HTTP"
+  protocol_port   = 8000
+}
+
+# Pool anlegen
+resource "openstack_lb_loadbalancer_v2_pool" "paperless_pool" {
+  name         = "paperless-pool"
+  listener_id  = openstack_lb_loadbalancer_v2_listener.paperless_listener.id
+  protocol     = "HTTP"
+  lb_method    = "ROUND_ROBIN"
+}
+
+resource "openstack_lb_loadbalancer_v2_member_v2" "paper-3" {
+  pool_id       = openstack_lb_loadbalancer_v2_pool.paperless_pool.id
+  address       = "192.168.254.21"
+  protocol_port = 8000
+  weight        = 1
+  admin_state_up = true
+}
+
+resource "openstack_lb_loadbalancer_v2_member_v2" "paper-2" {
+  pool_id       = openstack_lb_loadbalancer_v2_pool.paperless_pool.id
+  address       = "192.168.254.22"
+  protocol_port = 8000
+  weight        = 1
+  admin_state_up = true
+}
+
+resource "openstack_lb_loadbalancer_v2_member_v2" "paper-3" {
+  pool_id       = openstack_lb_loadbalancer_v2_pool.paperless_pool.id
+  address       = "192.168.254.23"
+  protocol_port = 8000
+  weight        = 1
+  admin_state_up = true
+}
