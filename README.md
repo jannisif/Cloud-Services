@@ -44,7 +44,7 @@ Das aufgeführte System umfasst:
 4. `terraform init` und `terraform apply` ausführen
 5. Mit `yes`bestätigen
 6. Warten und die aufgerufenen IP-Adressen im Terminal in den Browser eingeben
-7. Zugriff auf Instanzen für Fehleranalyse: Via SSH kann auf die Management-Instanz zugegriffen werden, der SSH-Key findet sich unter: VERZEICHNIS ANGEBEN
+7. Zugriff auf Instanzen für Fehleranalyse: Via SSH kann auf die Management-Instanz zugegriffen werden, der SSH-Key findet sich unter: /os-trusted-cas
 8. Zum Zerstören: `terraform destroy`.  ACHTUNG, hierbei werden alle Daten sowie nicht explizit extern gesicherte Backups gelöscht!
 
 ### Abhängigkeiten:
@@ -82,7 +82,8 @@ In den Dokumentationen der einzelnen Diensten können spezifische Einstellungsm�
 **Bitte vor Updates und vor allem bei Paperless-ngx auf eventuelle Breaking Changes informieren!**
 Es kann sein, dass in einer späteren Version z.B. sich ein bestimmtes Format zum Monitoring ändert, dort eine ältere Version im Script(Docker-compose) verwenden oder besser diese Änderung im Script anpassen.
 
-Die Updates werden per CronJob angelegt und können individuell angepasst werden. 
+Die Updates werden per CronJob angelegt und können individuell angepasst werden oder können manuell ausgeführt werden. 
+ 
 Konfigurierter Plan:
 -  Einmal pro Woche: `apt update && apt upgrade -y`
 -  Einmal pro Monat: `apt autoremove -y && apt clean`
