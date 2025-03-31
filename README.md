@@ -4,7 +4,7 @@
 Paperless-ngx ist ein Dokumentenmangagementsystem, welches auf Docker aufsetzt und OpenSource ist. Dabei werden im Hintergrund mithilfe von GlusterFS die verschiedenen Instanzen synchron und konsistent gehalten. Eine zusätzliche Management-Instanz kümmert sich sowohl um das Monitoring mithilfe von Prometheus/Grafana als auch um das Backup mittels Borg. Perspektivisch planen wir, auch das Logging durch Loki umzusetzen.
 Dieses Konstrukt wird mithilfe von Terraform auf OpenStack deployt und wird anhand von Bash-Skripten konfiguriert. Dabei können die Paperless-ngx Instanzen zumindest manuell skaliert werden. 
 
-Dieses BHB ist für neu einsteigende Administratoren geschrieben, welche sich mit Paperless-ngx 
+Dieses BHB ist für neu einsteigende Administratoren geschrieben, welche Paperless-ngx einzusetzen planen.
 Neben einem grundsätzlichen Verständnis von Docker und Linux sollte nach einer intensiven Auseinandersetzung mit dem folgenden Text die Basis für das grundlegende Verständnis und Bearbeitung der Umgebung vorhanden sein.
 
 ## 2. Beteiligte und Zuständigkeiten
