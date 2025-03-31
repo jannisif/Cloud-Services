@@ -23,7 +23,7 @@ Das aufgeführte System umfasst:
 - 1 Management-Instanz für Backup und Monitoring
 
 
-## 4. Bereitstellung der Server über Terraforn 
+## 4. Bereitstellung der Server über Terraform
 
 ### Vorbereitung:
 - Zugang(-sdaten) zu einer OpenStack-Instanz
