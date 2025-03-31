@@ -1,12 +1,17 @@
 #!/bin/bash
 
-echo "Starting setup for Prometheus & Grafana monitoring..."
+echo "Starting setup for Borg, Prometheus & Grafana monitoring..."
 
 # Update package lists
 apt update
 
 # Install dependencies
 apt install -y wget unzip curl
+
+###############################################################################
+# Install Borg
+###############################################################################
+apt install borgbackup -y
 
 ###############################################################################
 # Install Prometheus
